@@ -1,0 +1,65 @@
+name: "💬 意見・まちがい / Feedback"
+description: "翻訳のまちがい、不具合、追加してほしい国や名所、アイデアなど / Corrections, bugs, ideas"
+title: "[意見] "
+labels: ["feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        アースクイズを遊んでくださって、ありがとうございます。いただいた意見は作者が確認し、取り入れるものを選んで修正します。
+        日本語・English・中文・한국어、どの言語で書いていただいてもかまいません。
+
+        Thank you for playing Earth Quiz! Feel free to write in Japanese, English, Chinese or Korean.
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: "どんな内容ですか？ / What is this about?"
+      options:
+        - "翻訳・名前のまちがい / Translation or name error"
+        - "うまく動かない / Something doesn't work"
+        - "国・名所を追加してほしい / Add a country or place"
+        - "新しい遊びのアイデア / New idea"
+        - "その他 / Other"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: lang
+    attributes:
+      label: "遊んでいた言語 / Language you were playing in"
+      options:
+        - "日本語"
+        - "English"
+        - "简体中文"
+        - "繁體中文"
+        - "한국어"
+    validations:
+      required: false
+
+  - type: dropdown
+    id: screen
+    attributes:
+      label: "どの画面・モードですか？ / Which screen or mode?"
+      options:
+        - "国をさがせ！ / Find the Country"
+        - "この国はどこ？ / Name the Country"
+        - "首都クイズ / Capital Quiz"
+        - "都市・名所クイズ / Cities & Landmarks"
+        - "じゆうに見る / Free Explore"
+        - "場所をしらべる / Look Up a Place"
+        - "スタンプ帳 / Stamp Book"
+        - "メニュー・その他 / Menu or other"
+    validations:
+      required: false
+
+  - type: textarea
+    id: details
+    attributes:
+      label: "くわしい内容 / Details"
+      description: |
+        翻訳のまちがいなら「今の表記」と「正しいと思う表記」を、不具合なら「何をしたら、どうなったか」を書いてください。スクリーンショットも貼りつけられます。
+        For errors, please write the current text and what it should be. For bugs, what you did and what happened. Screenshots are welcome.
+      placeholder: "例）英語で「Czechia」と出るが、「Czech Republic」のほうが分かりやすい"
+    validations:
+      required: true

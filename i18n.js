@@ -3,7 +3,8 @@
 
 // 意見を受け付けるページのURL（GitHub の Issues など）。
 // 空のままだと、メニューの「意見を送る」リンクは表示されない。公開先が決まったらここに入れる。
-const FEEDBACK_URL = "https://github.com/lsm-120995/world-stamps/issues";
+// 一覧ではなく、意見を書く入力フォーム（.github/ISSUE_TEMPLATE/feedback.yml）を直接開く
+const FEEDBACK_URL = "https://github.com/lsm-120995/world-stamps/issues/new?template=feedback.yml";
 
 const LANG_KEY = "earthquiz:lang";
 const LANGS = [
