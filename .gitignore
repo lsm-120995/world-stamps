@@ -1,0 +1,8 @@
+# 開発ツールの設定（公開する必要がないもの）
+.claude/
+
+# OS やエディタが作るファイル
+Thumbs.db
+.DS_Store
+.vscode/
+node_modules/

@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>アースクイズ</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- 文言は i18n.js が data-i18n のキーを見て、選んだ言語に差しかえる。ここに書いてある日本語は初期値 -->
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">🌏 <span class="brand-text" data-i18n="app">アースクイズ</span></div>
+      <div class="hud" id="hud" hidden>
+        <span class="pill" id="hudQ">1 / 10</span>
+        <span class="pill score" id="hudScore">0</span>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="langBtn" data-i18n-aria="language" aria-label="言語">🌐</button>
+        <button class="icon-btn" id="muteBtn" aria-label="音をオフにする">🔊</button>
+        <button class="text-btn" id="menuBtn" data-i18n="menu" hidden>メニュー</button>
+      </div>
+    </header>
+
+    <div class="timer" id="timerWrap" hidden><div class="timer-bar" id="timerBar"></div></div>
+
+    <main class="stage">
+      <svg id="globe" role="img"></svg>
+      <!-- 「じゆうに見る」「場所をしらべる」で使う、地名つきの地図 -->
+      <div id="map" hidden></div>
+      <div class="tooltip" id="tooltip" hidden></div>
+      <div class="zoomctl">
+        <button class="icon-btn" id="zoomIn" aria-label="+">＋</button>
+        <button class="icon-btn" id="zoomOut" aria-label="-">－</button>
+        <button class="icon-btn" id="resetView" aria-label="reset">⟲</button>
+      </div>
+      <div class="loading" id="loading" data-i18n="loading">地図を読み込み中…</div>
+    </main>
+
+    <section class="panel" id="panel" hidden>
+      <div class="prompt" id="prompt"></div>
+      <div class="choices" id="choices"></div>
+      <div class="panel-row">
+        <div class="feedback" id="feedback" aria-live="polite"></div>
+        <button class="primary" id="nextBtn" hidden></button>
+      </div>
+    </section>
+  </div>
+
+  <!-- スタート画面 -->
+  <div class="overlay" id="menu">
+    <div class="card">
+      <h1>🌏 <span data-i18n="app">アースクイズ</span></h1>
+      <p class="lead" data-i18n="lead">地球儀を回して、世界の国をあてよう！</p>
+
+      <!-- クイズ以外の入口。画面が低くても隠れないよう、いちばん上に置く -->
+      <div class="extras">
+        <button class="secondary" id="bookBtn">📖 <span data-i18n="book">スタンプ帳</span> <span class="count" id="bookCount"></span></button>
+        <button class="secondary" id="lookupBtn">🔍 <span data-i18n="lookup">場所をしらべる</span></button>
+      </div>
+
+      <div class="row">
+        <div class="row-label" data-i18n="l_mode">モード</div>
+        <div class="segment modes" id="modeGroup">
+          <button data-value="find" aria-pressed="true"><b data-i18n="m_find">国をさがせ！</b><small data-i18n="m_find_s">国名を見て地球儀をタップ</small></button>
+          <button data-value="name" aria-pressed="false"><b data-i18n="m_name">この国はどこ？</b><small data-i18n="m_name_s">光る国を4択で答える</small></button>
+          <button data-value="capital" aria-pressed="false"><b data-i18n="m_capital">首都クイズ</b><small data-i18n="m_capital_s">首都名から国をタップ</small></button>
+          <button data-value="place" aria-pressed="false"><b data-i18n="m_place">都市・名所クイズ</b><small data-i18n="m_place_s">山や都市の場所をタップ</small></button>
+          <button data-value="explore" aria-pressed="false"><b data-i18n="m_explore">じゆうに見る</b><small data-i18n="m_explore_s">国名・首都を調べる</small></button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="row-label" data-i18n="l_region">地域</div>
+        <div class="segment" id="regionGroup">
+          <button data-value="world" aria-pressed="true" data-i18n="r_world">世界</button>
+          <button data-value="asia" aria-pressed="false" data-i18n="r_asia">アジア</button>
+          <button data-value="europe" aria-pressed="false" data-i18n="r_europe">ヨーロッパ</button>
+          <button data-value="africa" aria-pressed="false" data-i18n="r_africa">アフリカ</button>
+          <button data-value="americas" aria-pressed="false" data-i18n="r_americas">南北アメリカ</button>
+          <button data-value="oceania" aria-pressed="false" data-i18n="r_oceania">オセアニア</button>
+        </div>
+      </div>
+
+      <div class="row" id="levelRow">
+        <div class="row-label" data-i18n="l_level">難易度</div>
+        <div class="segment" id="levelGroup">
+          <button data-value="1" aria-pressed="true" data-i18n="lv1">かんたん</button>
+          <button data-value="2" aria-pressed="false" data-i18n="lv2">ふつう</button>
+          <button data-value="3" aria-pressed="false" data-i18n="lv3">むずかしい</button>
+        </div>
+      </div>
+
+      <div class="row" id="countRow">
+        <div class="row-label" data-i18n="l_count">問題数</div>
+        <div class="segment" id="countGroup">
+          <button data-value="10" aria-pressed="true" data-i18n="c_n" data-i18n-n="10">10問</button>
+          <button data-value="20" aria-pressed="false" data-i18n="c_n" data-i18n-n="20">20問</button>
+          <button data-value="0" aria-pressed="false" data-i18n="c_all">全問</button>
+        </div>
+      </div>
+
+      <div class="row" id="timeRow">
+        <div class="row-label" data-i18n="l_time">制限時間</div>
+        <select class="select" id="timeSelect" data-i18n-aria="l_time" aria-label="制限時間">
+          <option value="15" data-i18n="t_sec" data-i18n-n="15">15秒</option>
+          <option value="30" data-i18n="t_sec" data-i18n-n="30">30秒</option>
+          <option value="60" data-i18n="t_sec" data-i18n-n="60">60秒</option>
+          <option value="0" data-i18n="t_none" selected>制限なし</option>
+        </select>
+      </div>
+
+      <p class="best" id="bestScore"></p>
+      <button class="primary big" id="startBtn" data-i18n="start">スタート！</button>
+      <p class="help" data-i18n="help">ドラッグで回転 ・ ホイール／ピンチで拡大縮小</p>
+      <!-- 意見の送り先（i18n.js の FEEDBACK_URL を入れると表示される） -->
+      <a class="feedback-link" id="feedbackLink" data-i18n="feedback" target="_blank" rel="noopener" hidden>💬 意見・まちがいを送る</a>
+    </div>
+  </div>
+
+  <!-- 結果画面 -->
+  <div class="overlay" id="result" hidden>
+    <div class="card">
+      <div class="rank" id="resultRank"></div>
+      <div class="big-score" id="resultScore"></div>
+      <div class="detail" id="resultDetail"></div>
+      <div class="best-line" id="resultBest"></div>
+      <div class="new-stamps" id="resultStamps"></div>
+      <h3 id="mistakesTitle"></h3>
+      <ul class="mistakes" id="mistakes"></ul>
+      <div class="actions">
+        <button class="primary" id="retryBtn" data-i18n="retry">もう一度</button>
+        <button class="secondary" id="toMenuBtn" data-i18n="to_menu">メニューへ</button>
+      </div>
+      <button class="secondary wide" id="resultBookBtn" data-i18n="see_book">📖 スタンプ帳を見る</button>
+    </div>
+  </div>
+
+  <!-- スタンプ帳 -->
+  <div class="overlay" id="book" hidden>
+    <div class="card book">
+      <div class="book-head">
+        <h2>📖 <span data-i18n="book">スタンプ帳</span></h2>
+        <button class="icon-btn" id="bookClose" data-i18n-aria="close" aria-label="閉じる">✕</button>
+      </div>
+      <p class="book-help" data-i18n="book_help">クイズに正解するとスタンプがもらえます。集めたスタンプを押すと、地球儀でその場所を見られます。</p>
+      <div class="book-total" id="bookTotal"></div>
+      <div class="segment" id="bookTabs">
+        <button data-value="countries" aria-pressed="true" data-i18n="tab_countries">国</button>
+        <button data-value="places" aria-pressed="false" data-i18n="tab_places">都市・名所</button>
+      </div>
+      <div class="book-body" id="bookBody"></div>
+      <button class="text-link" id="bookReset" data-i18n="book_reset">スタンプをすべて消す</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/topojson/3.0.2/topojson.min.js"></script>
+  <script src="countries.js"></script>
+  <script src="places.js"></script>
+  <script src="names.js"></script>
+  <script src="i18n.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
