@@ -277,6 +277,23 @@ button:disabled { cursor: default; }
 
 .feedback-link { display: block; text-align: center; margin-top: 12px; color: #8fc4ff; font-size: .88rem; }
 
+/* ── 意見フォーム ── */
+#feedbackBox { z-index: 6; background: rgba(3, 8, 24, .7); }
+.feedback-card { display: flex; flex-direction: column; }
+.feedback-card .row-label { margin: 10px 0 6px; }
+.feedback-card textarea, .feedback-card input[type="text"] {
+  width: 100%; padding: 10px 12px; border-radius: 10px;
+  background: #0d1a3a; color: var(--text); border: 1px solid var(--panel-border);
+  font: inherit; font-weight: 400; font-size: 1rem; resize: vertical;
+}
+.feedback-card textarea:focus, .feedback-card input[type="text"]:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.feedback-card textarea::placeholder { color: #7f93bd; }
+.fb-trap { position: absolute !important; left: -9999px; width: 1px !important; height: 1px; opacity: 0; }
+.fb-note { color: var(--muted); font-size: .78rem; margin: 10px 0 8px; line-height: 1.6; }
+.fb-status { min-height: 1.4em; font-weight: 700; margin-bottom: 8px; text-align: center; }
+.fb-status.good { color: var(--good); }
+.fb-status.bad { color: var(--bad); }
+
 /* ── 言語選択 ── */
 #langPick { z-index: 10; background: rgba(3, 8, 24, .8); }
 .lang-card { width: min(380px, 100%); position: relative; }

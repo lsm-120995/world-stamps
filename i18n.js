@@ -6,6 +6,10 @@
 // 一覧ではなく、意見を書く入力フォーム（.github/ISSUE_TEMPLATE/feedback.yml）を直接開く
 const FEEDBACK_URL = "https://github.com/lsm-120995/world-stamps/issues/new?template=feedback.yml";
 
+// ゲーム内の意見フォームが送信する先（apps-script/Code.gs を Google に置いて公開したときのURL）。
+// 空のあいだは、ゲーム内フォームは出さず、上の GitHub のフォームを開く。
+const FEEDBACK_ENDPOINT = "https://script.google.com/macros/s/AKfycbws2K2_zGmkOC-d8Lz-e-io_26HeXOmEqof3MNEFyqawOJHmo3rg3loICFhWNso0QE_/exec";
+
 const LANG_KEY = "earthquiz:lang";
 const LANGS = [
   { code: "ja", label: "日本語", html: "ja", wiki: "ja", locale: "ja-JP" },
@@ -140,6 +144,24 @@ const UI = {
   lk_source: ["（文章の出典：Wikipedia、CC BY-SA）", "(Text source: Wikipedia, CC BY-SA)", "（文字来源：维基百科，CC BY-SA）", "（文字來源：維基百科，CC BY-SA）", "(글 출처: 위키백과, CC BY-SA)"],
   lk_more: [" ほか", " and more", " 等", " 等", " 외"],
   feedback: ["💬 意見・まちがいを送る", "💬 Send feedback or corrections", "💬 提交意见或纠错", "💬 提交意見或糾錯", "💬 의견·오류 보내기"],
+  fb_title: ["意見・まちがいを送る", "Send feedback", "提交意见", "提交意見", "의견 보내기"],
+  fb_intro: ["翻訳のまちがい、不具合、追加してほしい国や名所、アイデアなど、なんでもどうぞ。", "Translation errors, bugs, places to add, ideas — anything is welcome.", "翻译错误、故障、希望添加的国家或名胜、新点子，都欢迎告诉我们。", "翻譯錯誤、故障、希望新增的國家或名勝、新點子，都歡迎告訴我們。", "번역 오류, 오작동, 추가했으면 하는 나라나 명소, 아이디어 등 무엇이든 환영합니다."],
+  fb_kind: ["どんな内容ですか？", "What is this about?", "内容类型", "內容類型", "어떤 내용인가요?"],
+  fb_k1: ["翻訳・名前のまちがい", "Translation or name error", "翻译或名称错误", "翻譯或名稱錯誤", "번역·이름 오류"],
+  fb_k2: ["うまく動かない", "Something doesn't work", "无法正常使用", "無法正常使用", "제대로 작동하지 않음"],
+  fb_k3: ["国・名所を追加してほしい", "Add a country or place", "希望添加国家或名胜", "希望新增國家或名勝", "나라·명소 추가 요청"],
+  fb_k4: ["新しい遊びのアイデア", "New idea", "新玩法点子", "新玩法點子", "새로운 아이디어"],
+  fb_k5: ["その他", "Other", "其他", "其他", "기타"],
+  fb_msg: ["くわしい内容", "Details", "详细内容", "詳細內容", "자세한 내용"],
+  fb_msg_ph: ["例）〇〇の首都が△△と出るが、正しくは□□", "e.g. The capital of … is shown as …, but it should be …", "例：…的首都显示为…，应该是…", "例：…的首都顯示為…，應該是…", "예) …의 수도가 …로 나오는데 …가 맞습니다"],
+  fb_contact: ["返事が欲しい方は連絡先（任意）", "Contact, if you'd like a reply (optional)", "如需回复，请留下联系方式（选填）", "如需回覆，請留下聯絡方式（選填）", "답변을 원하시면 연락처 (선택)"],
+  fb_note: ["送信すると、内容と、遊んでいた言語・モードが作者にメールで届きます。名前やメールアドレスは、ご自身で書かないかぎり送られません。", "Sending delivers your message, plus the language and mode you were playing, to the author by email. Your name and email address are not sent unless you write them.", "提交后，内容以及您使用的语言和模式会通过邮件发送给作者。除非您自行填写，否则不会发送姓名或邮箱。", "送出後，內容以及您使用的語言和模式會透過郵件寄給作者。除非您自行填寫，否則不會傳送姓名或信箱。", "보내면 내용과 플레이 중이던 언어·모드가 제작자에게 메일로 전달됩니다. 직접 적지 않는 한 이름이나 메일 주소는 전송되지 않습니다."],
+  fb_send: ["送信する", "Send", "提交", "送出", "보내기"],
+  fb_sending: ["送信中…", "Sending…", "正在提交…", "傳送中…", "보내는 중…"],
+  fb_done: ["ありがとうございます！意見を受け取りました。", "Thank you! Your feedback was received.", "谢谢！已收到您的意见。", "謝謝！已收到您的意見。", "감사합니다! 의견을 받았습니다."],
+  fb_err: ["送信できませんでした。時間をおいて、もう一度お試しください。", "Couldn't send. Please try again later.", "提交失败，请稍后再试。", "傳送失敗，請稍後再試。", "보내지 못했습니다. 잠시 후 다시 시도해 주세요."],
+  fb_short: ["もう少しくわしく書いてください（5文字以上）。", "Please write a little more (at least 5 characters).", "请再写详细一些（至少5个字）。", "請再寫詳細一些（至少5個字）。", "조금 더 자세히 적어 주세요 (5자 이상)."],
+  fb_github: ["GitHubで書く（スクリーンショットを付けたい方）", "Write on GitHub instead (to attach screenshots)", "在 GitHub 上填写（可附截图）", "在 GitHub 上填寫（可附截圖）", "GitHub에서 작성 (스크린샷 첨부 가능)"],
   unknown: ["不明な地域", "Unknown area", "未知地区", "未知地區", "알 수 없는 지역"],
 };
 
