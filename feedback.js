@@ -68,7 +68,8 @@
       contact: $("fbContact").value.trim(),
       website: $("fbWebsite").value,
       lang: langInfo().label,
-      mode: pressed ? pressed.dataset.value : "",
+      // メニューで選ばれているモードを、画面に出ている名前（例：国をさがせ！）で送る
+      mode: pressed ? ((pressed.querySelector("b") || pressed).textContent.trim() + ` (${pressed.dataset.value})`) : "",
       screen: `${window.innerWidth}x${window.innerHeight}`,
     };
     $("fbSend").disabled = true;
