@@ -19,6 +19,8 @@
         <span class="pill score" id="hudScore">0</span>
       </div>
       <div class="top-actions">
+        <!-- 遊んでいる最中でも、いつでも意見を送れるようにする -->
+        <button class="icon-btn feedback-trigger" id="feedbackTop" data-i18n-aria="fb_title" aria-label="意見・まちがいを送る" title="" hidden>💬</button>
         <button class="icon-btn" id="langBtn" data-i18n-aria="language" aria-label="言語">🌐</button>
         <button class="icon-btn" id="muteBtn" aria-label="音をオフにする">🔊</button>
         <button class="text-btn" id="menuBtn" data-i18n="menu" hidden>メニュー</button>
@@ -60,6 +62,7 @@
       <div class="extras">
         <button class="secondary" id="bookBtn">📖 <span data-i18n="book">スタンプ帳</span> <span class="count" id="bookCount"></span></button>
         <button class="secondary" id="lookupBtn">🔍 <span data-i18n="lookup">場所をしらべる</span></button>
+        <button class="secondary feedback-btn feedback-trigger" id="feedbackLink" hidden>💬 <span data-i18n="fb_title">意見・まちがいを送る</span></button>
       </div>
 
       <div class="row">
@@ -116,8 +119,6 @@
       <p class="best" id="bestScore"></p>
       <button class="primary big" id="startBtn" data-i18n="start">スタート！</button>
       <p class="help" data-i18n="help">ドラッグで回転 ・ ホイール／ピンチで拡大縮小</p>
-      <!-- 意見の送り先（i18n.js の FEEDBACK_URL を入れると表示される） -->
-      <a class="feedback-link" id="feedbackLink" data-i18n="feedback" target="_blank" rel="noopener" hidden>💬 意見・まちがいを送る</a>
     </div>
   </div>
 

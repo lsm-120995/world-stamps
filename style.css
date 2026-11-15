@@ -275,6 +275,9 @@ button:disabled { cursor: default; }
 .stamp.got:hover { background: rgba(240,160,75,.32); }
 .text-link { background: none; border: 0; color: var(--muted); font-size: .8rem; text-decoration: underline; margin-top: 12px; align-self: center; }
 
+/* 意見ボタンは、ほかのボタンと区別がつくよう水色のふちどりにする */
+.extras .feedback-btn { border-color: #8fc4ff; color: #cfe6ff; background: rgba(143, 196, 255, .12); }
+.extras .feedback-btn:hover { background: rgba(143, 196, 255, .24); }
 .feedback-link { display: block; text-align: center; margin-top: 12px; color: #8fc4ff; font-size: .88rem; }
 
 /* ── 意見フォーム ── */

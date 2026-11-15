@@ -3,9 +3,19 @@
 // 中継役のURL（i18n.js の FEEDBACK_ENDPOINT）が空のあいだは、これまでどおり GitHub のフォームを開く。
 (function () {
   "use strict";
-  const link = document.getElementById("feedbackLink");
-  if (!link || !LANG) return;
-  if (!FEEDBACK_ENDPOINT) return; // 中継役がまだなければ、リンクは GitHub のフォームのまま
+  // 意見を送るボタン（メニューの上部と、画面右上の 💬）
+  const triggers = [...document.querySelectorAll(".feedback-trigger")];
+  if (!triggers.length || !LANG) return;
+  triggers.forEach((b) => { b.title = t("fb_title"); });
+  if (!FEEDBACK_ENDPOINT) {
+    // 中継役がまだなければ、GitHub のフォームを開く
+    if (!FEEDBACK_URL) return;
+    triggers.forEach((b) => {
+      b.hidden = false;
+      b.addEventListener("click", () => window.open(FEEDBACK_URL, "_blank", "noopener"));
+    });
+    return;
+  }
 
   const KINDS = ["translation", "bug", "add", "idea", "other"];
   let overlay = null;
@@ -96,9 +106,9 @@
     }
   }
 
-  // メニューのリンクを、GitHub へ飛ぶかわりにこのフォームを開くようにする
-  link.hidden = false;
-  link.removeAttribute("target");
-  link.setAttribute("href", "#feedback");
-  link.addEventListener("click", (e) => { e.preventDefault(); open(); });
+  // ボタンを押すと、このフォームを開く
+  triggers.forEach((b) => {
+    b.hidden = false;
+    b.addEventListener("click", (e) => { e.preventDefault(); open(); });
+  });
 })();

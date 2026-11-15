@@ -259,10 +259,5 @@ function showLangPicker(canClose) {
 // 起動時：言語が決まっていれば文言を差しかえ、まだなら言語選択を出す（ゲーム本体は選ぶまで始めない）
 if (LANG) applyStaticText();
 else showLangPicker(false);
-const feedbackEl = document.getElementById("feedbackLink");
-if (feedbackEl && FEEDBACK_URL) {
-  feedbackEl.href = FEEDBACK_URL;
-  feedbackEl.hidden = false;
-}
 const langBtnEl = document.getElementById("langBtn");
 if (langBtnEl) langBtnEl.addEventListener("click", () => showLangPicker(true));
