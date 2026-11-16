@@ -788,17 +788,26 @@
     return LOOKUP_NOTES.find((n) => n.names.some((x) => noteKey(x) === key)) || null;
   }
 
+  // 豆知識を、検索結果と同じ形にする
+  function noteToPlace(note) {
+    const i = Math.max(0, UI_ORDER.indexOf(LANG));
+    const pick = (arr) => arr[i] || arr[0];
+    return {
+      name: pick(note.title), sub: pick(note.sub), lat: note.lat, lon: note.lon, zoom: note.zoom,
+      extract: pick(note.text), note: true, wikiLang: note.wiki && note.wiki[0], wikiTitle: note.wiki && note.wiki[1],
+    };
+  }
+  // 入力した言葉を呼び名の一部にふくむ豆知識（「川崎」→ 川崎市役所）。1文字だけの入力では探さない
+  function relatedNotes(name) {
+    if (typeof LOOKUP_NOTES === "undefined") return [];
+    const key = noteKey(name);
+    if (key.length < 2) return [];
+    return LOOKUP_NOTES.filter((n) => n.names.some((x) => noteKey(x).includes(key)));
+  }
+
   async function lookupName(name, seq) {
     const note = findNote(name);
-    if (note) {
-      const i = Math.max(0, UI_ORDER.indexOf(LANG));
-      const pick = (arr) => arr[i] || arr[0];
-      showLookupResult({
-        name: pick(note.title), sub: pick(note.sub), lat: note.lat, lon: note.lon, zoom: note.zoom,
-        extract: pick(note.text), note: true, wikiLang: note.wiki && note.wiki[0], wikiTitle: note.wiki && note.wiki[1],
-      });
-      return;
-    }
+    if (note) { showLookupResult(noteToPlace(note)); return; }
     // 文字の種類から、探す言語版の順番を決める。
     // ハングル→韓国語版、かなを含む→日本語版、漢字だけ→中国語版と日本語版（選んだ言語に近いほうが先）、
     // 英字など→選んだ言語版→英語版
@@ -829,20 +838,25 @@
       }
       if (!pages.length) pages = found; // 当たりがなければ、最初の言語版の結果を控えとして持っておく
     }
-    if (!pages.length) { lookupStatus(t("lk_nf", { q: name }), true); return; }
     const toPlace = (p) => ({ name: p.title, sub: p.description, lat: p.lat, lon: p.lon, extract: p.extract, pageid: p.pageid, title: p.title, lang: p.lang });
-    showLookupResult(toPlace(pages[0]));
-    if (pages.length > 1) {
-      pages.forEach((p, i) => {
+    // 候補：Wikipedia の結果のあとに、関係のある豆知識（💡）を並べる
+    const items = [
+      ...pages.map((p) => ({ label: p.title, place: toPlace(p) })),
+      ...relatedNotes(name).map((n) => { const pl = noteToPlace(n); return { label: "💡 " + pl.name, place: pl }; }),
+    ];
+    if (!items.length) { lookupStatus(t("lk_nf", { q: name }), true); return; }
+    showLookupResult(items[0].place);
+    if (items.length > 1) {
+      items.forEach((it, i) => {
         const b = document.createElement("button");
         b.type = "button";
         b.className = "choice candidate";
-        b.textContent = p.title;
+        b.textContent = it.label;
         b.setAttribute("aria-pressed", String(i === 0));
         b.addEventListener("click", () => {
           sfx.tap();
           el.choices.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-          showLookupResult(toPlace(p));
+          showLookupResult(it.place);
         });
         el.choices.appendChild(b);
       });
