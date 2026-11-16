@@ -780,7 +780,25 @@
     } catch (err) { /* 概要が取れなくても、場所の表示はそのまま残す */ }
   }
 
+  // ゲーム独自の豆知識（lookup_notes.js）に同じ呼び名があれば、それを返す
+  const noteKey = (s) => s.replace(/\s/g, "").toLowerCase();
+  function findNote(name) {
+    if (typeof LOOKUP_NOTES === "undefined") return null;
+    const key = noteKey(name);
+    return LOOKUP_NOTES.find((n) => n.names.some((x) => noteKey(x) === key)) || null;
+  }
+
   async function lookupName(name, seq) {
+    const note = findNote(name);
+    if (note) {
+      const i = Math.max(0, UI_ORDER.indexOf(LANG));
+      const pick = (arr) => arr[i] || arr[0];
+      showLookupResult({
+        name: pick(note.title), sub: pick(note.sub), lat: note.lat, lon: note.lon, zoom: note.zoom,
+        extract: pick(note.text), note: true, wikiLang: note.wiki && note.wiki[0], wikiTitle: note.wiki && note.wiki[1],
+      });
+      return;
+    }
     // 文字の種類から、探す言語版の順番を決める。
     // ハングル→韓国語版、かなを含む→日本語版、漢字だけ→中国語版と日本語版（選んだ言語に近いほうが先）、
     // 英字など→選んだ言語版→英語版
@@ -844,15 +862,19 @@
     const where = [place.sub, country ? displayName(country) : ""].filter(Boolean).join("　｜　");
     const lang = place.lang || WIKI_TARGET;
     const variant = lang === "zh" && langInfo().variant ? `&variant=${langInfo().variant}` : "";
-    const link = place.pageid
-      ? `<span class="source">${lang !== WIKI_TARGET ? esc(t("lk_other_lang", { lang: WIKI_NATIVE_NAME[lang] || lang })) + " " : ""}` +
+    const link = place.note
+      ? `<span class="source">${esc(t("lk_note_src"))}` +
+        (place.wikiTitle ? ` <a href="https://${place.wikiLang}.wikipedia.org/wiki/${encodeURIComponent(place.wikiTitle)}" target="_blank" rel="noopener">${esc(t("lk_read", { title: place.wikiTitle }))}</a>` : "") +
+        `</span>`
+      : place.pageid
+      ?`<span class="source">${lang !== WIKI_TARGET ? esc(t("lk_other_lang", { lang: WIKI_NATIVE_NAME[lang] || lang })) + " " : ""}` +
         `<a href="https://${lang}.wikipedia.org/?curid=${place.pageid}${variant}" target="_blank" rel="noopener">${esc(t("lk_read", { title: place.title }))}</a>${esc(t("lk_source"))}</span>`
       : "";
     el.feedback.className = "feedback info lookup-result";
     el.feedback.innerHTML =
       `<strong>📍 ${esc(place.name)}</strong>` +
       (where ? `<span class="sub">${esc(where)}</span>` : "") +
-      (place.extract ? `<p class="summary">${esc(place.extract)}</p>` : "") +
+      (place.extract ? `<p class="summary">${place.note ? "💡 " : ""}${esc(place.extract)}</p>` : "") +
       link;
   }
   $("lookupBtn").addEventListener("click", () => { sfx.tap(); enterLookup(); });

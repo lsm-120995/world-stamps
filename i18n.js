@@ -141,6 +141,7 @@ const UI = {
   lk_nf: ["「{q}」に合う場所が見つかりませんでした。別の書き方でお試しください。", "No place found for \"{q}\". Try writing it another way.", "未找到与“{q}”相符的地点。请换一种写法试试。", "找不到與「{q}」相符的地點。請換一種寫法試試。", "\"{q}\"에 맞는 장소를 찾지 못했습니다. 다른 표기로 시도해 보세요."],
   lk_other_lang: ["選んだ言語の記事がないため、{lang}版の文章を表示しています。", "No article exists in your language, so the {lang} version is shown.", "所选语言没有对应条目，显示的是{lang}版内容。", "所選語言沒有對應條目，顯示的是{lang}版內容。", "선택한 언어의 문서가 없어 {lang}판 내용을 표시합니다."],
   lk_read: ["Wikipedia「{title}」で続きを読む", "Read more on Wikipedia: {title}", "在维基百科阅读“{title}”", "在維基百科閱讀「{title}」", "위키백과 \"{title}\"에서 더 읽기"],
+  lk_note_src: ["（アースクイズの豆知識）", "(Earth Quiz trivia)", "（地球测验小知识）", "（地球測驗小知識）", "(어스 퀴즈 상식)"],
   lk_source: ["（文章の出典：Wikipedia、CC BY-SA）", "(Text source: Wikipedia, CC BY-SA)", "（文字来源：维基百科，CC BY-SA）", "（文字來源：維基百科，CC BY-SA）", "(글 출처: 위키백과, CC BY-SA)"],
   lk_more: [" ほか", " and more", " 等", " 等", " 외"],
   feedback: ["💬 意見・まちがいを送る", "💬 Send feedback or corrections", "💬 提交意见或纠错", "💬 提交意見或糾錯", "💬 의견·오류 보내기"],

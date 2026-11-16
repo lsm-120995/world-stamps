@@ -35,6 +35,7 @@ node serve.js
 | `countries.js` | 国のデータ（日本語名・首都・地域・難易度） |
 | `places.js` | 都市・名所のデータ（位置・種類・難易度） |
 | `names.js` | 国名・首都・名所名の翻訳（英・簡・繁・韓） |
+| `lookup_notes.js` | 「場所をしらべる」で出すゲーム独自の豆知識（5言語） |
 | `i18n.js` | 画面の文言の翻訳と、言語の切りかえ |
 | `feedback.js` | ゲーム内の意見フォーム |
 | `apps-script/Code.gs` | 意見をメールで届ける中継役（Google Apps Script に置いて使う） |
